@@ -60,7 +60,6 @@
                     $form.append('<input type="hidden" name="_method" value="DELETE">')
                     $form.append('<input type="hidden" name="_token" value="'+$("meta[name='csrf-token']").attr('content')+'">')
                     $('body').append($form)
-
                     $('#delete-form').submit();
 
                 }
