@@ -17,8 +17,12 @@
         @endif
 
         <a class="btn btn-primary mb-2" href="{{ route('books.create') }}">Add Book</a>
+        <form action="{{ route('sign-out') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-danger">Sign out</button>
+        </form>
 
-        <table class="table">
+        <table id="books-table" class="table my-3">
             <thead>
                 <tr>
                     <th scope="col">Title</th>
@@ -26,31 +30,50 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($books as $book)
-                    <tr>
-                        <td>{{ $book->title }}</td>
-                        <td>
-                            <div class="d-flex flex-row bd-highlight mb-3">
-                                <a href="{{ route('books.edit', ['book' => $book]) }}" class="btn btn-success m-1">Edit</a>
-                                
-                                <form action="{{ route('books.destroy', ['book' => $book]) }}" method="POST">
-
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-danger" type="submit">Delete</button>
-
-                                </form>
-                                
-                            </div>
-                        </td>
-                    </tr>
-                @empty
-                    <p>No data to show</p>
-                @endforelse
+               
             </tbody>
         </table>
+       
     </div>
 
 </div>
 
+@endsection
+
+@section('scripts')
+<script>
+
+    function remove(id)
+    {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    
+                    $form = $('<form id="delete-form" method="POST" action="/books/'+id+'"></form>')
+                    $form.append('<input type="hidden" name="_method" value="DELETE">')
+                    $form.append('<input type="hidden" name="_token" value="'+$("meta[name='csrf-token']").attr('content')+'">')
+                    $('body').append($form)
+                    $('#delete-form').submit();
+
+                }
+        })
+    }
+
+    $('#books-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "{{ route('books.table') }}",
+        columns:[
+            { data: 'title' },
+            { data: 'actions' },
+        ]
+    });
+</script>
 @endsection
