@@ -17,10 +17,6 @@
         @endif
 
         <a class="btn btn-primary mb-2" href="{{ route('books.create') }}">Add Book</a>
-        <form action="{{ route('sign-out') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn btn-danger">Sign out</button>
-        </form>
 
         <table id="books-table" class="table my-3">
             <thead>

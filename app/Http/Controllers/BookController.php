@@ -13,28 +13,30 @@ class BookController extends Controller
 {
     
     public function index(){
-        
-        
         return view('contents.books.index');
     }
 
     public function table() {
-        $books = Book::select('id', 'title');
+        try {
+            $books = Book::select('id', 'title')->where('user_id', Auth::user()->id);
 
-        return DataTables::of($books)
-        ->addColumn('actions', function($book){
+            return DataTables::of($books)
+            ->addColumn('actions', function($book){
 
-            return '
-                <div class="d-flex flex-row bd-highlight mb-3">
-                    <a href="'.route('books.edit', ['book' => $book]).'" class="btn btn-success m-1">Edit</a>
-                    <button onclick="remove('.$book->id.')" class="btn btn-danger m-1">Delete</button>
-                    
-                </div>
-            ';
+                return '
+                    <div class="d-flex flex-row bd-highlight mb-3">
+                        <a href="'.route('books.edit', ['book' => $book]).'" class="btn btn-success m-1">Edit</a>
+                        <button onclick="remove('.$book->id.')" class="btn btn-danger m-1">Delete</button>
+                        
+                    </div>
+                ';
 
-        })
-        ->rawColumns(['actions'])
-        ->make(true);
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+        } catch (\Throwable $th) {
+            info($th->getMessage());
+        }
     }
 
     public function create(){

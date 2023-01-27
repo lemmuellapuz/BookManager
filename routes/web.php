@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\PublishedBookController;
 use App\Http\Controllers\SigninController;
 use App\Http\Controllers\SignoutController;
 use App\Http\Controllers\SignupController;
@@ -35,5 +36,9 @@ Route::middleware('auth')->group(function(){
 
     Route::resource('books', BookController::class);
     Route::get('books-table', [BookController::class, 'table'])->name('books.table');
+
+    Route::get('published-books', [PublishedBookController::class, 'index'])->name('published-books.index');
+    Route::get('published-books-table', [PublishedBookController::class, 'table'])->name('published-books.table');
+    Route::get('published-books/{book}', [PublishedBookController::class, 'view'])->name('published-books.view');
 
 });

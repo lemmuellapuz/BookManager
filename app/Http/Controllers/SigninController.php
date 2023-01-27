@@ -18,7 +18,10 @@ class SigninController extends Controller
         try {
             
             if( Auth::attempt([ 'email' => $request->email,'password' => $request->password], $request->remember) ) {
-                return redirect()->route('books.index');
+                if(Auth::user()->type == 'Author')
+                    return redirect()->route('books.index');
+
+                return redirect()->route('published-books.index');
             }
 
             return back()->with('error', 'Invalid credentials');
