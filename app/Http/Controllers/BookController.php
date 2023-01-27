@@ -6,13 +6,35 @@ use App\Http\Requests\StoreBookRequest;
 use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Yajra\DataTables\Facades\DataTables;
 
 class BookController extends Controller
 {
     
     public function index(){
-        $books = Book::select('id', 'title')->get();
-        return view('contents.books.index')->with('books', $books);
+        
+        
+        return view('contents.books.index');
+    }
+
+    public function table() {
+        $books = Book::select('id', 'title');
+
+        return DataTables::of($books)
+        ->addColumn('actions', function($book){
+
+            return '
+                <div class="d-flex flex-row bd-highlight mb-3">
+                    <a href="'.route('books.edit', ['book' => $book]).'" class="btn btn-success m-1">Edit</a>
+                    <button onclick="remove('.$book->id.')" class="btn btn-danger m-1">Delete</button>
+                    
+                </div>
+            ';
+
+        })
+        ->rawColumns(['actions'])
+        ->make(true);
     }
 
     public function create(){
@@ -22,8 +44,8 @@ class BookController extends Controller
     public function store(StoreBookRequest $request)
     {
         try {
-            
-            Book::create([
+
+            Auth::user()->books()->create([
                 'title' => $request->title,
                 'content' => $request->content
             ]);

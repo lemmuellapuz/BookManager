@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\SigninController;
+use App\Http\Controllers\SignoutController;
+use App\Http\Controllers\SignupController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,11 +17,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+//GUEST & AUTH
+
+Route::middleware('guest')->group(function(){
+
+    Route::get('/sign-up', [SignupController::class, 'index'])->name('sign-up.index');
+    Route::post('/sign-up', [SignupController::class, 'signUp'])->name('sign-up');
+    
+    Route::get('/sign-in', [SigninController::class, 'index'])->name('sign-in.index');
+    Route::post('/sign-in', [SigninController::class, 'signIn'])->name('sign-in');
+    
 });
 
-// Route::get('/books', [BookController::class, 'index']);
-// Route::get('/books/create', [BookController::class, 'create']);
+Route::middleware('auth')->group(function(){
 
-Route::resource('books', BookController::class);
+    Route::post('/sign-out', [SignoutController::class, 'signOut'])->name('sign-out');
+
+    Route::resource('books', BookController::class);
+    Route::get('books-table', [BookController::class, 'table'])->name('books.table');
+
+});
